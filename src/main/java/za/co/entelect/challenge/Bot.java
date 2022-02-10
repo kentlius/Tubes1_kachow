@@ -26,6 +26,9 @@ public class Bot {
     private final static Command EMP = new EmpCommand();
     private final static Command TURN_RIGHT = new ChangeLaneCommand(1);
     private final static Command TURN_LEFT = new ChangeLaneCommand(-1);
+    private final static Command DECELERATE = new DecelerateCommand();
+    private final static Command DO_NOTHING = new DoNothingCommand();
+    // private final static Command TWEET = new TweetCommand(4, 76); //lane 4, block 47
 
     public Bot(Random random, GameState gameState) {
         this.random = random;
