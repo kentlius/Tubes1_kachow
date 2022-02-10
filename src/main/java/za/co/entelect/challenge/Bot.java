@@ -92,4 +92,12 @@ public class Bot {
         return blocks;
     }
 
+    //Kembaliin true jika kachow lagi di depan musuh
+    private Boolean isWinning() {
+        if(myCar.position.block > opponent.position.block) {
+            return true;
+        }
+        return false;
+    }
+
 }
