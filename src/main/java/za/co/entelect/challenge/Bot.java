@@ -38,22 +38,36 @@ public class Bot {
     }
 
     public Command run() {
-        List<Object> blocks = getBlocksInFront(myCar.position.lane, myCar.position.block);
+        List<Object> inFront = getBlocks(myCar.position.lane, myCar.position.block);
+        if(myCar.position.lane == 1){
+            if(inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL)){
+                return TURN_RIGHT;
+            }
+        }
+        else if(myCar.position.lane == 4){
+            if(inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL)){
+                return TURN_LEFT;
+            }
+        }
+        else {
+            List<Object> inRight = getBlocksSide(myCar.position.lane + 1, myCar.position.block - 1);
+            List<Object> inLeft = getBlocksSide(myCar.position.lane - 1, myCar.position.block - 1);
+            if(inRight.contains(Terrain.MUD)){
+                return ACCELERATE;
+            }
+            if((inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL)) && myCar.position.lane == 2){
+                return TURN_RIGHT;
+            }
+            else if(inFront.contains(Terrain.MUD) &&  inLeft.contains(Terrain.MUD)) {
+                return TURN_RIGHT;
+            }
+            else if((inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL)) && myCar.position.lane == 3){
+                return TURN_LEFT;
+            }
+        }
         if (myCar.damage > 1) {
             return FIX;
         }
-
-//        if(blocks.contains(Terrain.MUD)) {
-//            if (myCar.position.lane == 1 && myCar.speed <= 3) {
-//                return TURN_RIGHT;
-//            } else if(myCar.speed <= 3){
-//                return TURN_LEFT;
-//            }
-//        }
-//        if (blocks.contains(Terrain.MUD)) {
-//            int i = random.nextInt(directionList.size());
-//            return new ChangeLaneCommand(directionList.get(i));
-//        }
         if (hasPowerUp(PowerUps.BOOST, myCar.powerups)) {
             return BOOST;
         }
@@ -63,6 +77,7 @@ public class Bot {
         return ACCELERATE;
     }
 
+    //Mengecek apakah kachow memiliki power up
     private Boolean hasPowerUp(PowerUps powerUpToCheck, PowerUps[] available) {
         for (PowerUps powerUp: available) {
             if (powerUp.equals(powerUpToCheck)) {
@@ -71,11 +86,9 @@ public class Bot {
         }
         return false;
     }
-    /**
-     * Returns map of blocks and the objects in the for the current lanes, returns the amount of blocks that can be
-     * traversed at max speed.
-     **/
-    private List<Object> getBlocksInFront(int lane, int block) {
+
+    //Mengecek sisi depan dari kachow
+    private List<Object> getBlocks(int lane, int block) {
         List<Lane[]> map = gameState.lanes;
         List<Object> blocks = new ArrayList<>();
         int startBlock = map.get(0)[0].position.block;
@@ -88,6 +101,22 @@ public class Bot {
 
             blocks.add(laneList[i].terrain);
 
+        }
+        return blocks;
+    }
+
+    //Mengecek sisi samping dari kachow
+    private List<Object> getBlocksSide(int lane, int block) {
+        List<Lane[]> map = gameState.lanes;
+        List<Object> blocks = new ArrayList<>();
+        int startBlock = map.get(0)[0].position.block;
+
+        Lane[] laneList = map.get(lane);
+        for (int i = max(block - startBlock, 0); i <= block - startBlock + Bot.maxSpeed; i++) {
+            if (laneList[i] == null || laneList[i].terrain == Terrain.FINISH) {
+                break;
+            }
+            blocks.add(laneList[i].terrain);
         }
         return blocks;
     }
