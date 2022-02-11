@@ -41,7 +41,7 @@ public class Bot {
         List<Object> inFront = getBlocks(myCar.position.lane, myCar.position.block);
         // Situasi di lane 1 dan ada Obstacle
         if(myCar.position.lane == 1){
-            if(inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL)){
+            if(inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL) || inFront.contains(Terrain.OIL_SPILL)){
                 if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
                     return LIZARD;
                 } else {
@@ -51,7 +51,7 @@ public class Bot {
         }
         // Situasi di lane 4 dan ada Obstacle
         else if(myCar.position.lane == 4){
-            if(inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL)){
+            if(inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL) || inFront.contains(Terrain.OIL_SPILL)){
                 if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
                     return LIZARD;
                 } else {
@@ -63,24 +63,24 @@ public class Bot {
         else {
             List<Object> inRight = getBlocksSide(myCar.position.lane + 1, myCar.position.block - 1);
             List<Object> inLeft = getBlocksSide(myCar.position.lane - 1, myCar.position.block - 1);
-            if(inRight.contains(Terrain.MUD)){
+            if(inRight.contains(Terrain.MUD) || inRight.contains(Terrain.OIL_SPILL)){
                 return ACCELERATE;
             }
-            if((inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL)) && myCar.position.lane == 2){
+            if((inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL) || inFront.contains(Terrain.OIL_SPILL)) && myCar.position.lane == 2){
                 if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
                     return LIZARD;
                 } else {
                     return TURN_RIGHT;
                 }
             }
-            else if(inFront.contains(Terrain.MUD) &&  inLeft.contains(Terrain.MUD)) {
+            else if((inFront.contains(Terrain.MUD) || inFront.contains(Terrain.OIL_SPILL)) &&  (inLeft.contains(Terrain.MUD) || inLeft.contains(Terrain.OIL_SPILL))) {
                 if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
                     return LIZARD;
                 } else {
                     return TURN_RIGHT;
                 }
             }
-            else if((inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL)) && myCar.position.lane == 3){
+            else if((inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL) || inFront.contains(Terrain.OIL_SPILL)) && myCar.position.lane == 3){
                 if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
                     return LIZARD;
                 } else {
