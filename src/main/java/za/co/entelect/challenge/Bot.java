@@ -104,6 +104,18 @@ public class Bot {
         if (hasPowerUp(PowerUps.OIL, myCar.powerups)) {
             return OIL;
         }
+        // Situasi jika punya EMP -> cek jika menang, jika kalah tembak emp kalo lanenya dekat dengan lane musuh
+        if (hasPowerUp(PowerUps.EMP, myCar.powerups)){
+            if(isWinning()){
+                return ACCELERATE;
+            } else {
+                if (myCar.position.lane==opponent.position.lane||myCar.position.lane==opponent.position.lane+1||myCar.position.lane==opponent.position.lane-1){
+                    return EMP;
+                } else {
+                    return ACCELERATE;
+                }
+            }
+        }
         return ACCELERATE;
     }
 
