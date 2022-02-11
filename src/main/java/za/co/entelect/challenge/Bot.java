@@ -39,16 +39,27 @@ public class Bot {
 
     public Command run() {
         List<Object> inFront = getBlocks(myCar.position.lane, myCar.position.block);
+        // Situasi di lane 1 dan ada Obstacle
         if(myCar.position.lane == 1){
             if(inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL)){
-                return TURN_RIGHT;
+                if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
+                    return LIZARD;
+                } else {
+                    return TURN_RIGHT;
+                }
             }
         }
+        // Situasi di lane 4 dan ada Obstacle
         else if(myCar.position.lane == 4){
             if(inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL)){
-                return TURN_LEFT;
+                if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
+                    return LIZARD;
+                } else {
+                    return TURN_LEFT;
+                }
             }
         }
+        // Situasi bukan di lane 1 atau 4 dan ada obstacle -> pilih belok dengan melihat lane mana yang tidak ada obstacle
         else {
             List<Object> inRight = getBlocksSide(myCar.position.lane + 1, myCar.position.block - 1);
             List<Object> inLeft = getBlocksSide(myCar.position.lane - 1, myCar.position.block - 1);
@@ -56,21 +67,40 @@ public class Bot {
                 return ACCELERATE;
             }
             if((inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL)) && myCar.position.lane == 2){
-                return TURN_RIGHT;
+                if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
+                    return LIZARD;
+                } else {
+                    return TURN_RIGHT;
+                }
             }
             else if(inFront.contains(Terrain.MUD) &&  inLeft.contains(Terrain.MUD)) {
-                return TURN_RIGHT;
+                if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
+                    return LIZARD;
+                } else {
+                    return TURN_RIGHT;
+                }
             }
             else if((inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL)) && myCar.position.lane == 3){
-                return TURN_LEFT;
+                if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
+                    return LIZARD;
+                } else {
+                    return TURN_LEFT;
+                }
             }
         }
-        if (myCar.damage > 1) {
+        // Situasi Fix -> jika damage 3 ke atas dan tidak punya boost (damage tidak perlu sampe 0)
+        if (myCar.damage > 2 && !hasPowerUp(PowerUps.BOOST, myCar.powerups)) {
             return FIX;
         }
+        // Situasi jika punya boost -> Fix jika damage belum 0, Boost jika damage = 0
         if (hasPowerUp(PowerUps.BOOST, myCar.powerups)) {
-            return BOOST;
+            if (myCar.damage!=0){
+                return FIX;
+            } else {
+                return BOOST;
+            }
         }
+        // Situasi jika punya oil -> langsung pake
         if (hasPowerUp(PowerUps.OIL, myCar.powerups)) {
             return OIL;
         }
