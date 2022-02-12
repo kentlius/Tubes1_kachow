@@ -69,56 +69,56 @@ public class Bot {
             return TWEET(opponent.position.lane, opponent.position.block - 1);
         }
 
-        if(myCar.position.lane == 1){
-            if(inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL) || inFront.contains(Terrain.OIL_SPILL)){
-                if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
-                    return LIZARD;
-                } else {
-                    return TURN_RIGHT;
+        if(inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL) || inFront.contains(Terrain.OIL_SPILL)){
+            if(myCar.position.lane == 1){
+                if(inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL) || inFront.contains(Terrain.OIL_SPILL)){
+                    if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
+                        return LIZARD;
+                    } else {
+                        return TURN_RIGHT;
+                    }
                 }
             }
+            // Situasi di lane 4 dan ada Obstacle
+            else if(myCar.position.lane == 4){
+                if(inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL) || inFront.contains(Terrain.OIL_SPILL)){
+                    if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
+                        return LIZARD;
+                    } else {
+                        return TURN_LEFT;
+                    }
+                }
+            }
+            // Situasi bukan di lane 1 atau 4 dan ada obstacle -> pilih belok dengan melihat lane mana yang tidak ada obstacle
+            else if(myCar.position.lane == 2 || myCar.position.lane == 3) {
+                List<Object> inRight = getBlocksSide(myCar.position.lane + 1, myCar.position.block - 1);
+                List<Object> inLeft = getBlocksSide(myCar.position.lane - 1, myCar.position.block - 1);
+                
+                if((inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL) || inFront.contains(Terrain.OIL_SPILL)) && myCar.position.lane == 2){
+                    if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
+                        return LIZARD;
+                    } else {
+                        return TURN_RIGHT;
+                    }
+                }
+                else if((inFront.contains(Terrain.MUD) || inFront.contains(Terrain.OIL_SPILL)) &&  (inLeft.contains(Terrain.MUD) || inLeft.contains(Terrain.OIL_SPILL))) {
+                    if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
+                        return LIZARD;
+                    } else {
+                        return TURN_RIGHT;
+                    }
+                }
+                else if((inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL) || inFront.contains(Terrain.OIL_SPILL)) && myCar.position.lane == 3){
+                    if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
+                        return LIZARD;
+                    } else {
+                        return TURN_LEFT;
+                    }
+                }
+            }
+            return ACCELERATE;
         }
-        // Situasi di lane 4 dan ada Obstacle
-        else if(myCar.position.lane == 4){
-            if(inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL) || inFront.contains(Terrain.OIL_SPILL)){
-                if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
-                    return LIZARD;
-                } else {
-                    return TURN_LEFT;
-                }
-            }
-        }
-        // Situasi bukan di lane 1 atau 4 dan ada obstacle -> pilih belok dengan melihat lane mana yang tidak ada obstacle
-        else {
-            List<Object> inRight = getBlocksSide(myCar.position.lane + 1, myCar.position.block - 1);
-            List<Object> inLeft = getBlocksSide(myCar.position.lane - 1, myCar.position.block - 1);
-            if(inRight.contains(Terrain.MUD) || inRight.contains(Terrain.OIL_SPILL)){
-                return ACCELERATE;
-            }
-            if((inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL) || inFront.contains(Terrain.OIL_SPILL)) && myCar.position.lane == 2){
-                if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
-                    return LIZARD;
-                } else {
-                    return TURN_RIGHT;
-                }
-            }
-            else if((inFront.contains(Terrain.MUD) || inFront.contains(Terrain.OIL_SPILL)) &&  (inLeft.contains(Terrain.MUD) || inLeft.contains(Terrain.OIL_SPILL))) {
-                if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
-                    return LIZARD;
-                } else {
-                    return TURN_RIGHT;
-                }
-            }
-            else if((inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL) || inFront.contains(Terrain.OIL_SPILL)) && myCar.position.lane == 3){
-                if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
-                    return LIZARD;
-                } else {
-                    return TURN_LEFT;
-                }
-            }
-        }
-        
-
+    
 
         return ACCELERATE;
     }
@@ -158,7 +158,7 @@ public class Bot {
         int startBlock = map.get(0)[0].position.block;
 
         Lane[] laneList = map.get(lane - 1);
-        for (int i = max(block - startBlock, 0); i <= block - startBlock + Bot.maxSpeed; i++) {
+        for (int i = max(block - startBlock, 0); i <= block - startBlock + 5; i++) {
             if (laneList[i] == null || laneList[i].terrain == Terrain.FINISH) {
                 break;
             }
