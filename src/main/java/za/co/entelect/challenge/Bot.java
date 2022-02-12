@@ -40,6 +40,8 @@ public class Bot {
         List<Object> inFront = getBlocks(myCar.position.lane, myCar.position.block);
         // Situasi di lane 1 dan ada Obstacle
 
+        
+
         // Situasi Fix -> jika damage 3 ke atas dan tidak punya boost (damage tidak perlu sampe 0)
         if (myCar.damage > 2 && !hasPowerUp(PowerUps.BOOST, myCar.powerups)) {
             return FIX;
@@ -52,12 +54,16 @@ public class Bot {
                 return BOOST;
             }
         }
+
+        if(myCar.speed == 0) {
+            return ACCELERATE;
+        }
         // Situasi jika punya oil -> langsung pake
-        if (hasPowerUp(PowerUps.OIL, myCar.powerups)) {
+        if (hasPowerUp(PowerUps.OIL, myCar.powerups) && myCar.speed < 15) {
             return OIL;
         }
         // Situasi jika punya EMP -> cek jika menang, jika kalah tembak emp kalo lanenya dekat dengan lane musuh
-        if (hasPowerUp(PowerUps.EMP, myCar.powerups)){
+        if (hasPowerUp(PowerUps.EMP, myCar.powerups) && myCar.speed < 15){
             if(!isWinning()){
                 if (myCar.position.lane==opponent.position.lane||myCar.position.lane==opponent.position.lane+1||myCar.position.lane==opponent.position.lane-1){
                     return EMP;
@@ -65,8 +71,8 @@ public class Bot {
             }
         }
         // Situasi jika punya TWEET -> pake di depan musuh
-        if (hasPowerUp(PowerUps.TWEET, myCar.powerups)){
-            return TWEET(opponent.position.lane, opponent.position.block - 1);
+        if (hasPowerUp(PowerUps.TWEET, myCar.powerups) && myCar.speed < 15){
+            return TWEET(opponent.position.lane, opponent.position.block + opponent.speed + 1);
         }
 
         if(inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL) || inFront.contains(Terrain.OIL_SPILL)){
@@ -101,7 +107,7 @@ public class Bot {
                         return TURN_RIGHT;
                     }
                 }
-                else if((inFront.contains(Terrain.MUD) || inFront.contains(Terrain.OIL_SPILL)) &&  (inLeft.contains(Terrain.MUD) || inLeft.contains(Terrain.OIL_SPILL))) {
+                else if((inFront.contains(Terrain.MUD) || inFront.contains(Terrain.OIL_SPILL)) && (inLeft.contains(Terrain.MUD) || inLeft.contains(Terrain.OIL_SPILL))) {
                     if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
                         return LIZARD;
                     } else {
@@ -118,6 +124,8 @@ public class Bot {
             }
             return ACCELERATE;
         }
+
+
     
 
         return ACCELERATE;
@@ -158,7 +166,7 @@ public class Bot {
         int startBlock = map.get(0)[0].position.block;
 
         Lane[] laneList = map.get(lane - 1);
-        for (int i = max(block - startBlock, 0); i <= block - startBlock + 5; i++) {
+        for (int i = max(block - startBlock, 0); i <= block - startBlock + Bot.maxSpeed; i++) {
             if (laneList[i] == null || laneList[i].terrain == Terrain.FINISH) {
                 break;
             }

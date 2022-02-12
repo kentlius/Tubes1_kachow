@@ -51,8 +51,8 @@ fabric.properties
 \.idea/
 *.iml
 
-target/*
+bin/*
 # Bin dipush nanti aja
-bin/* 
+bin/*
 # *.jar 
 *bot/rounds/*
