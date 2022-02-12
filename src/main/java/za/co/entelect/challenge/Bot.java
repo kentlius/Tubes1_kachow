@@ -26,9 +26,8 @@ public class Bot {
     private final static Command EMP = new EmpCommand();
     private final static Command TURN_RIGHT = new ChangeLaneCommand(1);
     private final static Command TURN_LEFT = new ChangeLaneCommand(-1);
-    private final static Command DECELERATE = new DecelerateCommand();
-    private final static Command DO_NOTHING = new DoNothingCommand();
-    // private final static Command TWEET = new TweetCommand(4, 76); //lane 4, block 47
+    // private final static Command DECELERATE = new DecelerateCommand();
+    // private final static Command DO_NOTHING = new DoNothingCommand();
 
     public Bot(Random random, GameState gameState) {
         this.random = random;
@@ -40,6 +39,36 @@ public class Bot {
     public Command run() {
         List<Object> inFront = getBlocks(myCar.position.lane, myCar.position.block);
         // Situasi di lane 1 dan ada Obstacle
+
+        // Situasi Fix -> jika damage 3 ke atas dan tidak punya boost (damage tidak perlu sampe 0)
+        if (myCar.damage > 2 && !hasPowerUp(PowerUps.BOOST, myCar.powerups)) {
+            return FIX;
+        }
+        // Situasi jika punya boost -> Fix jika damage belum 0, Boost jika damage = 0
+        if (hasPowerUp(PowerUps.BOOST, myCar.powerups)) {
+            if (myCar.damage!=0){
+                return FIX;
+            } else {
+                return BOOST;
+            }
+        }
+        // Situasi jika punya oil -> langsung pake
+        if (hasPowerUp(PowerUps.OIL, myCar.powerups)) {
+            return OIL;
+        }
+        // Situasi jika punya EMP -> cek jika menang, jika kalah tembak emp kalo lanenya dekat dengan lane musuh
+        if (hasPowerUp(PowerUps.EMP, myCar.powerups)){
+            if(!isWinning()){
+                if (myCar.position.lane==opponent.position.lane||myCar.position.lane==opponent.position.lane+1||myCar.position.lane==opponent.position.lane-1){
+                    return EMP;
+                } 
+            }
+        }
+        // Situasi jika punya TWEET -> pake di depan musuh
+        if (hasPowerUp(PowerUps.TWEET, myCar.powerups)){
+            return TWEET(opponent.position.lane, opponent.position.block - 1);
+        }
+
         if(myCar.position.lane == 1){
             if(inFront.contains(Terrain.MUD) || inFront.contains(Terrain.WALL) || inFront.contains(Terrain.OIL_SPILL)){
                 if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)){
@@ -88,38 +117,7 @@ public class Bot {
                 }
             }
         }
-        // Situasi Fix -> jika damage 3 ke atas dan tidak punya boost (damage tidak perlu sampe 0)
-        if (myCar.damage > 2 && !hasPowerUp(PowerUps.BOOST, myCar.powerups)) {
-            return FIX;
-        }
-        // Situasi jika punya boost -> Fix jika damage belum 0, Boost jika damage = 0
-        if (hasPowerUp(PowerUps.BOOST, myCar.powerups)) {
-            if (myCar.damage!=0){
-                return FIX;
-            } else {
-                return BOOST;
-            }
-        }
-        // Situasi jika punya oil -> langsung pake
-        if (hasPowerUp(PowerUps.OIL, myCar.powerups)) {
-            return OIL;
-        }
-        // Situasi jika punya EMP -> cek jika menang, jika kalah tembak emp kalo lanenya dekat dengan lane musuh
-        if (hasPowerUp(PowerUps.EMP, myCar.powerups)){
-            if(isWinning()){
-                return ACCELERATE;
-            } else {
-                if (myCar.position.lane==opponent.position.lane||myCar.position.lane==opponent.position.lane+1||myCar.position.lane==opponent.position.lane-1){
-                    return EMP;
-                } else {
-                    return ACCELERATE;
-                }
-            }
-        }
-        // Situasi jika punya TWEET -> pake di depan musuh
-        if (hasPowerUp(PowerUps.TWEET, myCar.powerUp)){
-            return TweetCommand(opponent.position.lane,opponent.position.block+1);
-        }
+        
 
 
         return ACCELERATE;
@@ -159,7 +157,7 @@ public class Bot {
         List<Object> blocks = new ArrayList<>();
         int startBlock = map.get(0)[0].position.block;
 
-        Lane[] laneList = map.get(lane);
+        Lane[] laneList = map.get(lane - 1);
         for (int i = max(block - startBlock, 0); i <= block - startBlock + Bot.maxSpeed; i++) {
             if (laneList[i] == null || laneList[i].terrain == Terrain.FINISH) {
                 break;
@@ -175,6 +173,11 @@ public class Bot {
             return true;
         }
         return false;
+    }
+
+    
+    private Command TWEET(int lane, int block) {
+        return new TweetCommand(lane, block);
     }
 
 }
