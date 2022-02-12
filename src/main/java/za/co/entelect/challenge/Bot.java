@@ -116,6 +116,12 @@ public class Bot {
                 }
             }
         }
+        // Situasi jika punya TWEET -> pake di depan musuh
+        if (hasPowerUp(PowerUps.TWEET, myCar.powerUp)){
+            return TweetCommand(opponent.position.lane,opponent.position.block+1);
+        }
+
+
         return ACCELERATE;
     }
 
