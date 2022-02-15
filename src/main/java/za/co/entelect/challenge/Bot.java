@@ -148,7 +148,11 @@ public class Bot {
                             return TURN_LEFT;
                         }
                     } else {
-                        return TURN_RIGHT;
+                        if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)) {
+                            return LIZARD;
+                        } else {
+                            return TURN_LEFT;
+                        }
                     }
                 }
                 // Situasi di lane 3 dan ada Obstacle
@@ -194,11 +198,19 @@ public class Bot {
                             return TURN_LEFT;
                         }
                     } else {
-                        return TURN_LEFT;
+                        if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)) {
+                            return LIZARD;
+                        } else {
+                            return TURN_LEFT;
+                        }
                     }
                 }
             } else {
-                return ACCELERATE;
+                if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)) {
+                    return LIZARD;
+                } else {
+                    return ACCELERATE;
+                }
             }
         }
         return ACCELERATE;
