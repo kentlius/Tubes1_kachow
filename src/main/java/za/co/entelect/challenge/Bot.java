@@ -48,7 +48,7 @@ public class Bot {
         }
 
         // Situasi jika punya boost -> Fix jika damage belum 0, Boost jika damage = 0
-        if (hasPowerUp(PowerUps.BOOST, myCar.powerups)) {
+        if (hasPowerUp(PowerUps.BOOST, myCar.powerups) && myCar.speed < 15) {
             if (myCar.damage != 0) {
                 return FIX;
             } else {
