@@ -192,15 +192,16 @@ public class Bot {
             }
         }
 
-        // Situasi jika punya oil -> langsung pake
+        // Situasi jika punya oil -> cek jika menang, jika menang maka pake oil
         if (hasPowerUp(PowerUps.OIL, myCar.powerups) && myCar.speed < 15) {
-            return OIL;
+            if (myCar.position.block > opponent.position.block) {
+                return OIL;
+            }
         }
    
-        // Situasi jika punya EMP -> cek jika menang, jika kalah tembak emp kalo lanenya
-        // dekat dengan lane musuh
+        // Situasi jika punya EMP -> cek jika menang, jika kalah tembak emp kalo lanenya dekat dengan lane musuh
         if (hasPowerUp(PowerUps.EMP, myCar.powerups) && myCar.speed < 15) {
-            if (!isWinning()) {
+            if (myCar.position.block < opponent.position.block) {
                 if (myCar.position.lane == opponent.position.lane || myCar.position.lane == opponent.position.lane + 1 || myCar.position.lane == opponent.position.lane - 1) {
                     return EMP;
                 }
@@ -210,6 +211,43 @@ public class Bot {
         // Situasi jika punya TWEET -> pake di depan musuh
         if (hasPowerUp(PowerUps.TWEET, myCar.powerups) && myCar.speed < 15 /*&& opponent.speed > 5*/) {
             return TWEET(opponent.position.lane, opponent.position.block + opponent.speed + 1);
+        }
+
+        // Greedy PowerUP
+        if ((!inFront.contains(Terrain.MUD) || !inFront.contains(Terrain.OIL_SPILL) || !inFront.contains(Terrain.WALL) || !inFront.contains(Terrain.CYBER_TRUCK))) {
+            if (myCar.position.lane == 1) {
+                List<Object> inRight = getBlocks(myCar.position.lane + 1, myCar.position.block - 1);
+                if (inRight.contains(Terrain.BOOST)) {
+                    return TURN_RIGHT;
+                }
+                else {
+                    return ACCELERATE;
+                }
+            }
+            else if (myCar.position.lane == 4) {
+                List<Object> inLeft = getBlocks(myCar.position.lane - 1, myCar.position.block - 1);
+                if (inLeft.contains(Terrain.BOOST)) {
+                    return TURN_LEFT;
+                }
+                else {
+                    return ACCELERATE;
+                }
+
+            }
+            else if (myCar.position.lane == 2 || myCar.position.lane == 3) {
+                List<Object> inRight = getBlocks(myCar.position.lane + 1, myCar.position.block - 1);
+                List<Object> inLeft = getBlocks(myCar.position.lane - 1, myCar.position.block - 1);
+                if (inRight.contains(Terrain.BOOST)) {
+                    return TURN_RIGHT;
+                } 
+                else if (inLeft.contains(Terrain.BOOST)) {
+                    return TURN_LEFT;
+                }
+                else {
+                    return ACCELERATE;
+                }
+            }
+            return ACCELERATE;
         }
 
         return ACCELERATE;
@@ -253,14 +291,6 @@ public class Bot {
         }
         
         return blocks;
-    }
-
-    // Kembaliin true jika kachow lagi di depan musuh
-    private Boolean isWinning() {
-        if (myCar.position.block > opponent.position.block) {
-            return true;
-        }
-        return false;
     }
 
     // Jalankan TWEET pada koordinat tertentu
