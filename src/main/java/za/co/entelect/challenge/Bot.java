@@ -61,28 +61,6 @@ public class Bot {
             return ACCELERATE;
         }
 
-        // Situasi jika punya oil -> langsung pake
-         if (hasPowerUp(PowerUps.OIL, myCar.powerups) && myCar.speed < 15) {
-         return OIL;
-         }
-
-        // Situasi jika punya EMP -> cek jika menang, jika kalah tembak emp kalo lanenya
-        // dekat dengan lane musuh
-        if (hasPowerUp(PowerUps.EMP, myCar.powerups) && myCar.speed < 15) {
-            if (!isWinning()) {
-                if (myCar.position.lane == opponent.position.lane || myCar.position.lane == opponent.position.lane + 1
-                        || myCar.position.lane == opponent.position.lane - 1) {
-                    return EMP;
-                }
-            }
-        }
-
-        // Situasi jika punya TWEET -> pake di depan musuh
-         if (hasPowerUp(PowerUps.TWEET, myCar.powerups) && myCar.speed < 15) {
-         return TWEET(opponent.position.lane, opponent.position.block + opponent.speed
-         + 1);
-         }
-
         // HINDAR
         if ((inFront.contains(Terrain.MUD) || inFront.contains(Terrain.OIL_SPILL) || inFront.contains(Terrain.WALL)
                 || inFront.contains(Terrain.CYBER_TRUCK))) {
@@ -213,6 +191,27 @@ public class Bot {
                 }
             }
         }
+
+        // Situasi jika punya oil -> langsung pake
+        if (hasPowerUp(PowerUps.OIL, myCar.powerups) && myCar.speed < 15) {
+            return OIL;
+        }
+   
+        // Situasi jika punya EMP -> cek jika menang, jika kalah tembak emp kalo lanenya
+        // dekat dengan lane musuh
+        if (hasPowerUp(PowerUps.EMP, myCar.powerups) && myCar.speed < 15) {
+            if (!isWinning()) {
+                if (myCar.position.lane == opponent.position.lane || myCar.position.lane == opponent.position.lane + 1 || myCar.position.lane == opponent.position.lane - 1) {
+                    return EMP;
+                }
+            }
+        }
+   
+        // Situasi jika punya TWEET -> pake di depan musuh
+        if (hasPowerUp(PowerUps.TWEET, myCar.powerups) && myCar.speed < 15 /*&& opponent.speed > 5*/) {
+            return TWEET(opponent.position.lane, opponent.position.block + opponent.speed + 1);
+        }
+
         return ACCELERATE;
     }
 
@@ -233,14 +232,26 @@ public class Bot {
         int startBlock = map.get(0)[0].position.block;
 
         Lane[] laneList = map.get(lane - 1);
-        for (int i = max(block - startBlock, 0); i <= block - startBlock + Bot.maxSpeed; i++) {
-            if (laneList[i] == null || laneList[i].terrain == Terrain.FINISH) {
-                break;
+        if (myCar.speed == 15) {
+            for (int i = max(block - startBlock, 0); i <= block - startBlock + 15; i++) {
+                if (laneList[i] == null || laneList[i].terrain == Terrain.FINISH) {
+                    break;
+                }
+    
+                blocks.add(laneList[i].terrain);
+    
             }
-
-            blocks.add(laneList[i].terrain);
-
+        } else {
+            for (int i = max(block - startBlock, 0); i <= block - startBlock + Bot.maxSpeed; i++) {
+                if (laneList[i] == null || laneList[i].terrain == Terrain.FINISH) {
+                    break;
+                }
+    
+                blocks.add(laneList[i].terrain);
+    
+            }
         }
+        
         return blocks;
     }
 
