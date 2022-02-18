@@ -32,7 +32,7 @@ Mengimplementasi bot mobil dalam permainan Overdrive dengan menggunakan strategi
      "game-engine-jar": "game-engine.jar",
      "verbose-mode": true,
      "max-runtime-ms": 1000,
-     "player-a": "./Tubes1Stima",
+     "player-a": "./Tubes1_kachow",
      "player-b": "./reference-bot/java",
      "max-request-retries": 10,
      "request-timeout-ms": 5000,
