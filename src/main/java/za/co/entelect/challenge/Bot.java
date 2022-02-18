@@ -263,7 +263,7 @@ public class Bot {
         return false;
     }
 
-    // Mengecek sisi depan dari kachow
+    // Mengecek block disekitar kachow
     private List<Object> getBlocks(int lane, int block) {
         List<Lane[]> map = gameState.lanes;
         List<Object> blocks = new ArrayList<>();
