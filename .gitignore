@@ -52,7 +52,6 @@ fabric.properties
 *.iml
 
 target/*
-# Bin dipush nanti aja
-bin/*
+
 # *.jar 
 *bot/rounds/*
