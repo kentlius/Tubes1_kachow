@@ -10,7 +10,8 @@ Mengimplementasi bot mobil dalam permainan Overdrive dengan menggunakan strategi
 
 ### Prerequisite
 
-- Java
+- The Java starter bot requires Java 8 or above.
+  https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 
 ### Installation
 
@@ -20,27 +21,35 @@ Mengimplementasi bot mobil dalam permainan Overdrive dengan menggunakan strategi
    git clone https://github.com/kentlius/Tubes1Stima.git
    ```
 
-2. Change directory to 
+2. Copy Tubes1Stima folder to starter-pack folder
 
-   ```sh
-   cd Tubes1Stima
-   ```
+3. Edit game-runner-config.json to
 
-3. ???
-
-   ```sh
-
+   ```json
+   {
+     "round-state-output-location": "./match-logs",
+     "game-config-file-location": "game-config.json",
+     "game-engine-jar": "game-engine.jar",
+     "verbose-mode": true,
+     "max-runtime-ms": 1000,
+     "player-a": "./Tubes1Stima",
+     "player-b": "./reference-bot/java",
+     "max-request-retries": 10,
+     "request-timeout-ms": 5000,
+     "is-tournament-mode": false,
+     "tournament": {
+       "connection-string": "",
+       "bots-container": "",
+       "match-logs-container": "",
+       "game-engine-container": "",
+       "api-endpoint": "http://localhost"
+     }
+   }
    ```
 
 ## Usage
 
-1. ???
-
-   ```sh
-
-   ```
-
-2. ???
+1. Execute run.bat
 
 ## Author
 
