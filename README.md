@@ -21,7 +21,7 @@ Mengimplementasi bot mobil dalam permainan Overdrive dengan menggunakan strategi
    git clone https://github.com/kentlius/Tubes1_kachow.git
    ```
 
-2. Copy Tubes1Stima folder to starter-pack folder
+2. Copy Tubes1_kachow folder to starter-pack folder
 
 3. Edit game-runner-config.json to
 
