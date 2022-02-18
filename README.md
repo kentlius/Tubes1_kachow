@@ -18,7 +18,7 @@ Mengimplementasi bot mobil dalam permainan Overdrive dengan menggunakan strategi
 1. Clone the repo
 
    ```sh
-   git clone https://github.com/kentlius/Tubes1Stima.git
+   git clone https://github.com/kentlius/Tubes1_kachow.git
    ```
 
 2. Copy Tubes1Stima folder to starter-pack folder
